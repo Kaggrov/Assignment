@@ -79,7 +79,7 @@ const Tags = ({tags,setTags}) => {
           <Tag
             className="edit-tag"
             key={tag}
-            closable={index !== 0}
+            closable={index !== -1}
             onClose={() => handleClose(tag)}
           >
             <span
