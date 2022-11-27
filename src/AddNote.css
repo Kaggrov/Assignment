@@ -1,0 +1,49 @@
+.todo__input {
+    background-color: rgb(230, 207, 196);
+    height: 35px;
+    border: 3px solid #b86a2b;
+    padding: 5px;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    margin-right: 20px;
+}
+
+.button__input {  
+  
+  margin-left: 15px;
+  width: 60px;
+  height: 40px;
+  border: #e6d113;
+  background: #e6d113;
+  text-align: center;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer; 
+  font-size: 20px;
+
+}
+.todo__form {
+    display: flex;
+    flex-direction: row;
+    margin: 15px;
+
+}
+.todo__date {
+    max-width: 80px;
+}
+.todo__tag
+{
+    display: flex;
+    flex-direction: row;
+    background-color: #ddb38e;
+}
+.todo__tag > *{
+    margin:10px;
+    height: 30px;
+}
+.todo__desc {
+    background: rgb(226, 222, 222);
+    min-height: 50px;
+    min-width: 170px;
+    margin-right: 20px;
+}
