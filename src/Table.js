@@ -12,6 +12,7 @@ const Table = ({todo,setTodo}) => {
 
 
     const [editingRow,setEditingRow] = useState(null);
+    const [editingRowTitle,setEditingRowTitle] = useState(null);
     const [form] = Form.useForm();
     
     const handleDelete = (key) => {
@@ -53,16 +54,20 @@ const Table = ({todo,setTodo}) => {
           sorter: (a, b) => a.title.localeCompare(b.title),
           tip: 'Title of Todo note ',
           render: (text,record) => {
+              const handleChange = (e) => {
+                setEditingRowTitle(e.target.value)
+              }
+
               if(editingRow === record.id){
                 console.log("hello");
                 return (<Form.Item
-                  title='title'
+                  name="title"
                   rules={[{
                     required:true,
                     message:"Please Enter title",
                   }]}
                 >
-                  <Input/>
+                  <Input onChange={handleChange}/>
                 </Form.Item>);
 
               }else {
@@ -164,11 +169,6 @@ const Table = ({todo,setTodo}) => {
             <>
               <Button type="link" style={{marginLeft:0,padding:0}} onClick={() => {
                 setEditingRow(record.id);
-                form.setFieldsValue({
-
-                    title : record.title,
-                    
-                })
               }}>
               Edit
               </Button>
@@ -190,12 +190,17 @@ const Table = ({todo,setTodo}) => {
     const [value, setValue] = useState('');
 
     const onFinish = (values) => {
-      console.log({values})
       const UpdatedDataSource = [...todo]
-      UpdatedDataSource.splice(editingRow,1,{...values , id:editingRow})
-      // console.log(UpdatedDataSource)
+      
+      values = {
+        title : editingRowTitle,
+      }
+
+      UpdatedDataSource[editingRow - 1]['title'] = values.title;
+
       setTodo(UpdatedDataSource)
       setEditingRow(null)
+      setEditingRowTitle(null)
     }
 
   return (
