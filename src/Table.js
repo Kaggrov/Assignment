@@ -5,69 +5,24 @@ import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { Button, Dropdown, Space, Tag ,Typography,Select,Input,Popconfirm} from 'antd';
 import { useRef ,useState} from 'react'
 import { DownOutlined } from '@ant-design/icons';
+import {Form} from 'antd';
 
 
 const Table = ({todo,setTodo}) => {
 
-    const [dropText,setDropText] = useState("Open");
 
-    const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record.key === editingKey;
-
+    const [editingRow,setEditingRow] = useState(null);
+    const [form] = Form.useForm();
+    
     const handleDelete = (key) => {
-      const newData = dataSource.filter((item) => item.key !== key);
+      const newData = todo.filter((item) => item.id !== key);
+      console.log(newData)
       setTodo(newData);
     };
 
-    const edit = (record) => {
-      setEditingKey(record.key);
-    };
+    const stat =  ["Open","Working","Done","Overdue"];
 
-    const save = async (key) => {
-      try {
-        const newData = [...todo];
-        const index = newData.findIndex((item) => key === item.key);
-
-        if (index > -1) {
-          const item = newData[index];
-          newData.splice(index, 1, {
-            ...item,
-          });
-          setTodo(newData);
-          setEditingKey('');
-        } else {
-          
-          setTodo(newData);
-          setEditingKey('');
-        }
-      } catch (errInfo) {
-        console.log('Validate Failed:', errInfo);
-      }
-    };
-
-    const items =  [
-        {
-          label: 'Open',
-          key: 'open',
-        },
-        {
-          label: 'Working',
-          key: 'working',
-        },
-        {
-            label: 'Done',
-            key: 'done',
-        },
-        {
-            label: 'Overdue',
-            key: 'overdue',
-        },
-      ]
     
-      const handleChange = ({ key }) => {
-            setDropText(key);
-      };
-
     const columns = [
         {
           dataIndex: 'index',
@@ -97,6 +52,23 @@ const Table = ({todo,setTodo}) => {
           editable: true,
           sorter: (a, b) => a.title.localeCompare(b.title),
           tip: 'Title of Todo note ',
+          render: (text,record) => {
+              if(editingRow === record.id){
+                console.log("hello");
+                return (<Form.Item
+                  title='title'
+                  rules={[{
+                    required:true,
+                    message:"Please Enter title",
+                  }]}
+                >
+                  <Input/>
+                </Form.Item>);
+
+              }else {
+                return <p>{text}</p>
+              }
+          },
           formItemProps: {
             rules: [
               {
@@ -160,7 +132,7 @@ const Table = ({todo,setTodo}) => {
           },
           render: (_, record) => (
             <Space>
-              {record.labels.map((name) => (
+              {record?.labels?.map((name) => (
                 <Tag key={name}>
                   {name}
                 </Tag>
@@ -174,21 +146,13 @@ const Table = ({todo,setTodo}) => {
             
             render: (_,record) => (
     
-              <Dropdown
-                  menu={{
-                    items,
-                    selectable: true,
-                    defaultSelectedKeys: ['open'],
-                  }}
-                  
-              >
-                  <Typography.Link>
-                    <Space>
-                      Status
-                      <DownOutlined />
-                    </Space>
-                  </Typography.Link>
-              </Dropdown>
+                  <Select placeholder={record.st} style={{marginLeft:"10px"}}>
+                    {
+                        stat.map((status,index)=>{
+                            return <Select.Option key={index} value={status}>{status}</Select.Option>
+                        } )
+                    }
+                  </Select>
             ),
           },
         {
@@ -198,15 +162,22 @@ const Table = ({todo,setTodo}) => {
           render: (text, record, _, action) => [
             // eslint-disable-next-line jsx-a11y/anchor-is-valid
             <>
-              <a
-                key="editable"
-                onClick={() => {
-                  action?.startEditable?.(record.id);
-                } }
+              <Button type="link" style={{marginLeft:0,padding:0}} onClick={() => {
+                setEditingRow(record.id);
+                form.setFieldsValue({
+
+                    title : record.title,
+                    
+                })
+              }}>
+              Edit
+              </Button>
+              <Button type='link' style={{marginLeft:"0px",padding:0}}
+                htmlType='submit'
               >
-                Edit
-              </a>
-              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                Save
+              </Button>
+              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
                 <a>Delete</a>
               </Popconfirm></>
             
@@ -216,17 +187,16 @@ const Table = ({todo,setTodo}) => {
       
       const actionRef = useRef();
       
-      const dataSource = [
-        {
-            id:1,
-            title:"Hello",
-            Description:"Bye",
-            DueDate:"11-12-12",
-            labels:[{name:"tag"}]
-            
-        }
-      ]
     const [value, setValue] = useState('');
+
+    const onFinish = (values) => {
+      console.log({values})
+      const UpdatedDataSource = [...todo]
+      UpdatedDataSource.splice(editingRow,1,{...values , id:editingRow})
+      // console.log(UpdatedDataSource)
+      setTodo(UpdatedDataSource)
+      setEditingRow(null)
+    }
 
   return (
     <><Input
@@ -242,7 +212,8 @@ const Table = ({todo,setTodo}) => {
       setTodo(filteredData);
     }}
   />
-      <ProTable
+      <Form form={form} onFinish={onFinish}>
+        <ProTable
       dataSource={todo}
       actionRef={actionRef}
       columns={columns}
@@ -254,9 +225,6 @@ const Table = ({todo,setTodo}) => {
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',
         persistenceType: 'localStorage',
-        onChange(value) {
-          console.log('value: ', value);
-        },
       }}
       rowKey="id"
       // search={{
@@ -267,25 +235,16 @@ const Table = ({todo,setTodo}) => {
           listsHeight: 400,
         },
       }}
-      form={{
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
-        },
-      }}
       pagination={{
         pageSize: 5,
         showSizeChanger: false,
       }}
       toolBarRender={false}
       headerTitle="List"
-      search={false} /></>
-
+      search={false} />
+      </Form>
+      </>
+    
   )
 }
 
