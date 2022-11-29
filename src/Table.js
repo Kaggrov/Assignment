@@ -6,6 +6,9 @@ import { Button, Dropdown, Space, Tag ,Typography,Select,Input,Popconfirm} from 
 import { useRef ,useState} from 'react'
 import { DownOutlined } from '@ant-design/icons';
 import {Form} from 'antd';
+import DatePicker from "react-datepicker";
+import Tags from './Tags';
+import './Table.css'
 
 
 const Table = ({todo,setTodo}) => {
@@ -13,7 +16,11 @@ const Table = ({todo,setTodo}) => {
 
     const [editingRow,setEditingRow] = useState(null);
     const [editingRowTitle,setEditingRowTitle] = useState(null);
+    const [editingRowDesc,setEditingRowDesc] =  useState(null);
+    const [tags, setTags] = useState([]);
+    const [startDate, setStartDate] = useState(todo.DueDate); 
     const [form] = Form.useForm();
+    const current = new Date();
     
     const handleDelete = (key) => {
       const newData = todo.filter((item) => item.id !== key);
@@ -97,6 +104,27 @@ const Table = ({todo,setTodo}) => {
                 },
               ],
             },
+            render: (text,record) => {
+              const handleChangeDesc = (e) => {
+                setEditingRowDesc(e.target.value)
+              }
+
+              if(editingRow === record.id){
+                console.log("hello");
+                return (<Form.Item
+                  name="Description"
+                  rules={[{
+                    required:true,
+                    message:"Please Enter Description",
+                  }]}
+                >
+                  <Input onChange={handleChangeDesc}/>
+                </Form.Item>);
+
+              }else {
+                return <p>{text}</p>
+              }
+          },
           },
         {
           title: 'Due Date',
@@ -106,13 +134,43 @@ const Table = ({todo,setTodo}) => {
           valueType: 'date',
           sorter: (a, b) => a.DueDate.localeCompare(b.DueDate),
           hideInSearch: true,
+          render: (text,record) => {
+            // const handleChange = (e) => {
+            //   setEditingRowDate(e.target.value)
+            // }
+
+            if(editingRow === record.id){
+              console.log("hello");
+              return (<Form.Item
+                name="DueDate"
+                rules={[{
+                  required:true,
+                  message:"Please Enter valid Date",
+                }]}
+              >
+                <DatePicker 
+                    selected={startDate} 
+                    onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}}
+                    className="todo__date"
+                />  
+                {/* <Input onChange={handleChange}/> */}
+              </Form.Item>);
+
+            }else {
+              return <p>{text}</p>
+            }
+        },
         },
         {
           disable: true,
           title: 'Tags for Importance',
           dataIndex: 'tags',
           filters: true,
-          onFilter: true,
+          onFilter: (text,record) => {
+            
+            return record.labels.includes(text);
+             
+          },
           filters: [
             {
               text: 'Urgent',
@@ -135,19 +193,63 @@ const Table = ({todo,setTodo}) => {
           renderFormItem: (_, { defaultRender }) => {
             return defaultRender(_);
           },
-          render: (_, record) => (
-            <Space>
+          render: (_, record) => {
+
+            if(editingRow === record.id){
+              console.log("hello");
+              return (<Form.Item
+                name="tags"
+                rules={[{
+                  required:true,
+                  message:"Please Enter Tags",
+                }]}
+              >
+                <Tags tags={tags} setTags={setTags}/>  
+                {/* <Input onChange={handleChange}/> */}
+              </Form.Item>);
+
+            }else {
+              
+              return (<Space>
               {record?.labels?.map((name) => (
                 <Tag key={name}>
                   {name}
                 </Tag>
               ))}
-            </Space>
-          ),
+            </Space>)
+            }
+        
+
+            
+          },
         },
         {
             dataIndex: 'status',
             title: 'Status',
+            onFilter: (value,record) => {
+                // console.log(value)
+                // console.log(record);
+
+                return value ===record.st;
+            },
+            filters: [
+              {
+                text: 'Open',
+                value: 'Open',
+              },
+              {
+                text: 'Working',
+                value: 'Working',
+              },
+              {
+                text:'Done',
+                value:'Done'
+              },
+              {
+                text:'Overdue',
+                value:'Overdue'
+              }
+            ],
             
             render: (_,record) => (
     
@@ -194,13 +296,22 @@ const Table = ({todo,setTodo}) => {
       
       values = {
         title : editingRowTitle,
+        Description:editingRowDesc,
+        DueDate : startDate,
+        labels:tags
       }
 
       UpdatedDataSource[editingRow - 1]['title'] = values.title;
+      UpdatedDataSource[editingRow-1]['Description'] = values.Description
+      UpdatedDataSource[editingRow-1]['DueDate'] = values.DueDate;
+      UpdatedDataSource[editingRow-1]['labels'] = values.labels;
 
       setTodo(UpdatedDataSource)
       setEditingRow(null)
       setEditingRowTitle(null)
+      setEditingRowDesc(null)
+      setStartDate(null)
+      setTags([]);
     }
 
   return (

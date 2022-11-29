@@ -6,27 +6,10 @@ import { useState } from 'react';
 import Tags from './Tags';
 import {v4 as uuidv4} from "uuid";
 import {Select,Menu,Dropdown} from 'antd';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
 
-    // const items =  [
-    //     {
-    //       label: 'Open',
-    //       key: 'open',
-    //     },
-    //     {
-    //       label: 'Working',
-    //       key: 'working',
-    //     },
-    //     {
-    //         label: 'Done',
-    //         key: 'done',
-    //     },
-    //     {
-    //         label: 'Overdue',
-    //         key: 'overdue',
-    //     },
-    //   ]
       
       const stat =  ["Open","Working","Done","Overdue"];
     
@@ -69,7 +52,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
     <form onSubmit={onFormSubmit} className='todo__form'>
         <input 
             type="text" 
-            placeholder='Enter a Note..' 
+            placeholder='Enter a Note Title..' 
             className='todo__input'
             value = {input}
             required
@@ -81,11 +64,6 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
             value = {desc}
             required
             onChange={onDescSChange}
-        />
-        <DatePicker 
-            selected={startDate} 
-            onChange={(date) =>{(date.getDate()>current.getDate() ? setStartDate(date) : alert("Invalid End Date "))}} 
-            className='todo__date'
         />  
         <div className='todo__tag'>
             <Tags tags={tags} setTags={setTags}/>
@@ -98,9 +76,32 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
               } )
           }
         </Select>
-        <button className='button__input'>Add</button>
+        <DatePicker 
+            selected={startDate} 
+            onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}} 
+            className='todo__date'
+        />
+        <button className='button__input'><PlusCircleOutlined /></button>
     </form>
   )
 }
 
 export default AddNote
+
+// wrapper {
+//   display: flex;
+//     align-items: center;
+//     justify-content: center;
+// }
+
+// datepicker-input-contauner {
+  // align-items: center;
+  //   justify-content: center;
+  //   display: flex;
+  //   padding-bottom: 1rem;
+// }
+
+// todo_date {
+  // padding: 0.4rem;
+  //   border: none;
+// }

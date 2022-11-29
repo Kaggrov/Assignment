@@ -4,16 +4,16 @@
     align-items: center;
     width: 100%;
     min-height: 100vh;
-    background : linear-gradient(to left top, rgb(101, 103, 196), rgb(187, 155, 229));
+    background : linear-gradient(to left top, rgb(105, 214, 214), rgb(197, 247, 240));
   
   }
   .parent__box {
-    background-color: rgb(216, 98, 51);
+    background-color: rgb(101, 140, 150);
     min-width: 60vh;
     min-height: 80vh;
     padding:30px;
     border-radius: 10px;
-    box-shadow: 3px 6px 40px rgb(202, 96, 63);
+    box-shadow: 3px 6px 40px rgb(63, 151, 202);
     display: flex;
     flex-direction: column;
     align-items: center;
