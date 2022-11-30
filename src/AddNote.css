@@ -12,7 +12,7 @@
 
 .button__input {  
   
-  margin-left: 10px;
+  margin-left: 40%;
   width: 100px;
   height: 40px;
   border: #d67636;
@@ -24,12 +24,17 @@
   font-size: 20px;
   padding: 10px;
 
+
 }
 .todo__form {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    padding : 20px;
     margin: 10px;
-
+    border : 3px solid rgb(37, 158, 214);
+    border-radius: 15px;
+    max-width: 65%;
+    background-color: rgb(96, 184, 190);
 }
 .todo__date {
     max-width: 80px;
@@ -38,6 +43,7 @@
     margin-left: 10px;
     padding: 0.4rem;
     border: none;
+    margin-bottom: 30px;
 }
 .todo__tag
 {
@@ -59,7 +65,8 @@
     border-radius: 5px;
 }
 
-.react-datepicker-wrapper {
+
+/* .react-datepicker-wrapper {
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -74,5 +81,5 @@
 
 .ant-select-arrow {
     padding-bottom: 1.6rem;
-}
+} */
 

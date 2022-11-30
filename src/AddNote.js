@@ -8,7 +8,7 @@ import {v4 as uuidv4} from "uuid";
 import {Select,Menu,Dropdown} from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 
-const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
+const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOriginalTodo}) => {
 
       
       const stat =  ["Open","Working","Done","Overdue"];
@@ -33,11 +33,11 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
     const onFormSubmit = (e) => {
 
         e.preventDefault();
+        setOriginalTodo([...todo,{id:todo.length+1,timeStamp:timeStamp,title:input,Description:desc,DueDate:startDate,labels:tags,st:st}]);
         setTodo([...todo,{id:todo.length+1,timeStamp:timeStamp,title:input,Description:desc,DueDate:startDate,labels:tags,st:st}]);
         setTags([]);
         setInput("");
         setDesc("");
-
     };
 
   
@@ -50,6 +50,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
   return (
 
     <form onSubmit={onFormSubmit} className='todo__form'>
+      <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Enter Title of Note :-</div>
         <input 
             type="text" 
             placeholder='Enter a Note Title..' 
@@ -58,6 +59,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
             required
             onChange={onInputChange}
         />
+        <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Enter Description of Note :-</div>
         <textarea
             placeholder='Enter the description ' 
             className='todo__desc'
@@ -65,10 +67,12 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
             required
             onChange={onDescSChange}
         />  
+        <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Enter Any Tags for Note :-</div>
         <div className='todo__tag'>
             <Tags tags={tags} setTags={setTags}/>
         </div>
-        <Select placeholder='Select status' style={{marginLeft:"10px"}} onChange={handleStatus} value={st}>
+        <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Enter Status of Note :-</div>
+        <Select placeholder='Select status' onChange={handleStatus} value={st}>
           {
               stat.map((status,index)=>{
     
@@ -76,12 +80,13 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo}) => {
               } )
           }
         </Select>
+        <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Select End Date :-</div>
         <DatePicker 
             selected={startDate} 
             onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}} 
             className='todo__date'
         />
-        <button className='button__input'><PlusCircleOutlined /></button>
+        <button className='button__input'>Submit</button>
     </form>
   )
 }

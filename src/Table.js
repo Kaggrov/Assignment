@@ -9,10 +9,10 @@ import {Form} from 'antd';
 import DatePicker from "react-datepicker";
 import Tags from './Tags';
 import './Table.css'
+import moment from 'moment';
 
 
-const Table = ({todo,setTodo}) => {
-
+const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) => {
 
     const [editingRow,setEditingRow] = useState(null);
     const [editingRowTitle,setEditingRowTitle] = useState(null);
@@ -20,11 +20,12 @@ const Table = ({todo,setTodo}) => {
     const [tags, setTags] = useState([]);
     const [startDate, setStartDate] = useState(todo.DueDate); 
     const [form] = Form.useForm();
+    const [isEditing ,setIsEditing] = useState(null);
     const current = new Date();
     
     const handleDelete = (key) => {
       const newData = todo.filter((item) => item.id !== key);
-      console.log(newData)
+      setOriginalTodo(newData)
       setTodo(newData);
     };
 
@@ -42,7 +43,7 @@ const Table = ({todo,setTodo}) => {
             dataIndex: 'timeStamp',
             ellipsis: true,
             editable: false,
-            sorter:(a, b) => a.timestamp.localeCompare(b.timestamp),
+            sorter: (a, b) => a.timeStamp.toString().localeCompare(b.timeStamp.toString()),
             tip: 'Creation of note',
             formItemProps: {
               rules: [
@@ -66,7 +67,6 @@ const Table = ({todo,setTodo}) => {
               }
 
               if(editingRow === record.id){
-                console.log("hello");
                 return (<Form.Item
                   name="title"
                   rules={[{
@@ -74,7 +74,7 @@ const Table = ({todo,setTodo}) => {
                     message:"Please Enter title",
                   }]}
                 >
-                  <Input onChange={handleChange}/>
+                  <Input onChange={handleChange} placeholder={record.title}/>
                 </Form.Item>);
 
               }else {
@@ -110,7 +110,6 @@ const Table = ({todo,setTodo}) => {
               }
 
               if(editingRow === record.id){
-                console.log("hello");
                 return (<Form.Item
                   name="Description"
                   rules={[{
@@ -118,7 +117,7 @@ const Table = ({todo,setTodo}) => {
                     message:"Please Enter Description",
                   }]}
                 >
-                  <Input onChange={handleChangeDesc}/>
+                  <Input onChange={handleChangeDesc} placeholder={record.Description}/>
                 </Form.Item>);
 
               }else {
@@ -132,15 +131,11 @@ const Table = ({todo,setTodo}) => {
           editable: true,
           dataIndex: 'DueDate',
           valueType: 'date',
-          sorter: (a, b) => a.DueDate.localeCompare(b.DueDate),
+          sorter: (a, b) => a.DueDate.toString().localeCompare(b.DueDate.toString()),
           hideInSearch: true,
           render: (text,record) => {
-            // const handleChange = (e) => {
-            //   setEditingRowDate(e.target.value)
-            // }
-
+            
             if(editingRow === record.id){
-              console.log("hello");
               return (<Form.Item
                 name="DueDate"
                 rules={[{
@@ -152,8 +147,9 @@ const Table = ({todo,setTodo}) => {
                     selected={startDate} 
                     onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}}
                     className="todo__date"
+                    placeholderText={record.DueDate}
                 />  
-                {/* <Input onChange={handleChange}/> */}
+                
               </Form.Item>);
 
             }else {
@@ -196,7 +192,6 @@ const Table = ({todo,setTodo}) => {
           render: (_, record) => {
 
             if(editingRow === record.id){
-              console.log("hello");
               return (<Form.Item
                 name="tags"
                 rules={[{
@@ -205,7 +200,7 @@ const Table = ({todo,setTodo}) => {
                 }]}
               >
                 <Tags tags={tags} setTags={setTags}/>  
-                {/* <Input onChange={handleChange}/> */}
+               
               </Form.Item>);
 
             }else {
@@ -266,32 +261,63 @@ const Table = ({todo,setTodo}) => {
           title: 'Action',
           valueType: 'option',
           key: 'option',
-          render: (text, record, _, action) => [
+          render: (text, record, _, action) => {
             // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            <>
-              <Button type="link" style={{marginLeft:0,padding:0}} onClick={() => {
-                setEditingRow(record.id);
-              }}>
-              Edit
-              </Button>
-              <Button type='link' style={{marginLeft:"0px",padding:0}}
-                htmlType='submit'
-              >
-                Save
-              </Button>
-              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-                <a>Delete</a>
-              </Popconfirm></>
             
-          ],
-        },
-      ];
-      
+              return (
+
+                <>
+                  <Button type="link" style={{ marginLeft: 0, padding: 0 }} className='edit-button-active' onClick={() => {
+                    setIsEditing(true);
+                    setEditingRow(record.id);
+                    console.log(isEditing)
+                    
+                    document.getElementsByClassName('save-button-unactive')[0].classList.add('save-button-active')
+                    document.getElementsByClassName('save-button-active')[0].classList.remove('save-button-unactive')
+
+                    document.getElementsByClassName('edit-button-active')[0].classList.add('edit-button-unactive')
+                    document.getElementsByClassName('edit-button-active')[1].classList.add('edit-button-unactive')
+                    
+                    document.getElementsByClassName('edit-button-unactive')[0].classList.remove('edit-button-active')
+                    document.getElementsByClassName('edit-button-unactive')[1].classList.remove('edit-button-active')
+                    
+                    console.log(document.getElementsByClassName('edit-button-active')[1])
+
+                  } }>
+                    Edit
+                  </Button>
+
+                  <Button type='link' style={{ marginLeft: "15px", padding: 0 }}
+                    htmlType='submit'
+                    className='save-button-unactive'
+                  >
+                    Save
+                  </Button>
+                    
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
+                      <a style={{marginLeft:"15px"}} className='edit-button-active' >Delete</a>
+                    </Popconfirm></>
+                )
+ 
+        
+        }
+      }
+    ]
       const actionRef = useRef();
       
     const [value, setValue] = useState('');
 
     const onFinish = (values) => {
+      document.getElementsByClassName('save-button-active')[0].classList.add('save-button-unactive')
+      document.getElementsByClassName('save-button-unactive')[0].classList.remove('save-button-active')
+
+      document.getElementsByClassName('edit-button-unactive')[0].classList.add('edit-button-active')
+      document.getElementsByClassName('edit-button-unactive')[1].classList.add('edit-button-active')
+      
+      document.getElementsByClassName('edit-button-active')[0].classList.remove('edit-button-unactive')
+      document.getElementsByClassName('edit-button-active')[1].classList.remove('edit-button-unactive')
+
+      
       const UpdatedDataSource = [...todo]
       
       values = {
@@ -312,6 +338,7 @@ const Table = ({todo,setTodo}) => {
       setEditingRowDesc(null)
       setStartDate(null)
       setTags([]);
+      setIsEditing(false);
     }
 
   return (
@@ -319,12 +346,25 @@ const Table = ({todo,setTodo}) => {
     style={{marginBottom:'10px'}}
     placeholder="Search Title ...."
     value={value} 
+
+    onSelect = {() => {
+      if(count === 0) {
+        setOriginalTodo(todo);
+        setCount(1);
+      }
+    }}
+
     onChange={e => {
+
       const currValue = e.target.value;
-      setValue(currValue);
-      const filteredData = todo.filter(entry =>
+
+      console.log(originalTodo)
+      
+      const filteredData = originalTodo.filter(entry =>
         entry.title.includes(currValue)
       );
+      
+      setValue(currValue);
       setTodo(filteredData);
     }}
   />

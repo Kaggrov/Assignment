@@ -9,6 +9,9 @@ const Home = () => {
     const [desc,setDesc] = useState("");
     const [todo,setTodo] = useState([]);
 
+    const [count, setCount] = useState(0);
+
+    const [originalTodo, setOriginalTodo] = useState([]);
 
   return (
     <div className='parent__container'>
@@ -21,8 +24,11 @@ const Home = () => {
             setDesc = {setDesc}
             todo = {todo}
             setTodo = {setTodo}
+            originalTodo = {originalTodo}
+            setOriginalTodo = {setOriginalTodo} 
           />
-          <Table todo = {todo} setTodo={setTodo}/>
+          <Table todo = {todo} setTodo={setTodo} count = {count} setCount = {setCount} originalTodo = {originalTodo}
+            setOriginalTodo = {setOriginalTodo} />
       </div>
     </div>
   )
