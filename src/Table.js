@@ -1,6 +1,6 @@
 import React from 'react'
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { ActionType, ProColumns } from '@ant-design/pro-components';
+import { ActionType, FormListContext, ProColumns } from '@ant-design/pro-components';
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { Button, Dropdown, Space, Tag ,Typography,Select,Input,Popconfirm} from 'antd';
 import { useRef ,useState} from 'react'
@@ -74,7 +74,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                     message:"Please Enter title",
                   }]}
                 >
-                  <Input onChange={handleChange} placeholder={record.title}/>
+                  <Input onChange={handleChange} placeholder={record.title} />
                 </Form.Item>);
 
               }else {
@@ -147,7 +147,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                     selected={startDate} 
                     onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}}
                     className="todo__date"
-                    placeholderText={record.DueDate}
+                    placeholderText={(record.DueDate).toString()}
                 />  
                 
               </Form.Item>);
@@ -269,8 +269,14 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                 <>
                   <Button type="link" style={{ marginLeft: 0, padding: 0 }} className='edit-button-active' onClick={() => {
                     setIsEditing(true);
+                    console.log(record)
                     setEditingRow(record.id);
-                    console.log(isEditing)
+                    setEditingRowTitle(record.title)
+                    setEditingRowDesc(record.Description)
+                    
+                    setStartDate(record.DueDate)
+                    setTags(record.labels)
+                   
                     
                     document.getElementsByClassName('save-button-unactive')[0].classList.add('save-button-active')
                     document.getElementsByClassName('save-button-active')[0].classList.remove('save-button-unactive')
@@ -281,7 +287,6 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                     document.getElementsByClassName('edit-button-unactive')[0].classList.remove('edit-button-active')
                     document.getElementsByClassName('edit-button-unactive')[1].classList.remove('edit-button-active')
                     
-                    console.log(document.getElementsByClassName('edit-button-active')[1])
 
                   } }>
                     Edit
@@ -337,7 +342,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
       setEditingRowTitle(null)
       setEditingRowDesc(null)
       setStartDate(null)
-      setTags([]);
+      setTags(null);
       setIsEditing(false);
     }
 
