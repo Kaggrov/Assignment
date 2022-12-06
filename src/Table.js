@@ -273,6 +273,8 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                     setEditingRow(record.id);
                     setEditingRowTitle(record.title)
                     setEditingRowDesc(record.Description)
+
+                    console.log(todo)
                     
                     setStartDate(record.DueDate)
                     setTags(record.labels)

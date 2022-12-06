@@ -11,7 +11,7 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOriginalTodo}) => {
 
       
-      const stat =  ["Open","Working","Done","Overdue"];
+    const stat =  ["Open","Working","Done","Overdue"];
     
     const [tags, setTags] = useState([]);
     const [startDate, setStartDate] = useState(new Date()); 
