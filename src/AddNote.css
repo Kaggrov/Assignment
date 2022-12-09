@@ -34,7 +34,13 @@
     border : 3px solid rgb(37, 158, 214);
     border-radius: 15px;
     max-width: 65%;
+    width: 50%;
     background-color: rgb(96, 184, 190);
+}
+.form__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .todo__date {
     max-width: 80px;

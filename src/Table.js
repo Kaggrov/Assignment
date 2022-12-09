@@ -350,6 +350,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
 
   return (
     <><Input
+    className='table__search'
     style={{marginBottom:'10px'}}
     placeholder="Search Title ...."
     value={value} 

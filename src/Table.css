@@ -17,3 +17,6 @@
 .edit-button-unactive {
     display: none;
 }
+.table__search {
+    margin-top: 30px;
+}

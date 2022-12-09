@@ -48,7 +48,9 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
      
 
   return (
+    <div className='form__container'>
 
+    
     <form onSubmit={onFormSubmit} className='todo__form'>
       <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Enter Title of Note :-</div>
         <input 
@@ -88,6 +90,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
         />
         <button className='button__input'>Submit</button>
     </form>
+    </div>
   )
 }
 
