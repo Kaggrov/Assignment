@@ -22,7 +22,10 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
     const [form] = Form.useForm();
     const [isEditing ,setIsEditing] = useState(null);
     const current = new Date();
-    
+
+    const [statusState,setStatusState] =useState(null);
+    const [selectedRow,setSelectedRow] = useState(null);
+
     const handleDelete = (key) => {
       const newData = todo.filter((item) => item.id !== key);
       setOriginalTodo(newData)
@@ -190,28 +193,44 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
             return defaultRender(_);
           },
           render: (_, record) => {
+            console.log(statusState)
 
             if(editingRow === record.id){
-              return (<Form.Item
-                name="tags"
-                rules={[{
-                  required:true,
-                  message:"Please Enter Tags",
-                }]}
-              >
-                <Tags tags={tags} setTags={setTags}/>  
-               
-              </Form.Item>);
+              
+                return (<Form.Item
+                  name="tags"
+                  rules={[{
+                    required:true,
+                    message:"Please Enter Tags",
+                  }]}
+                >
+                  <Tags tags={tags} setTags={setTags}/>  
+                 
+                </Form.Item>);
+              
 
             }else {
               
-              return (<Space>
-              {record?.labels?.map((name) => (
-                <Tag key={name}>
-                  {name}
-                </Tag>
-              ))}
-            </Space>)
+              if(statusState ==='Done' && selectedRow === record.id)
+              {
+                return (<Space>
+                  {record?.labels?.map((name) => (
+                    <Tag key={name}>
+                      <s>{name}</s>
+                    </Tag>
+                  ))}
+                </Space>)
+              }
+              else{
+                return (<Space>
+                  {record?.labels?.map((name) => (
+                    <Tag key={name}>
+                      {name}
+                    </Tag>
+                  ))}
+                </Space>)
+              }
+                
             }
         
 
@@ -225,7 +244,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                 // console.log(value)
                 // console.log(record);
 
-                return value ===record.st;
+                return value === record.st;
             },
             filters: [
               {
@@ -247,8 +266,8 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
             ],
             
             render: (_,record) => (
-    
-                  <Select placeholder={record.st} style={{marginLeft:"10px"}}>
+                
+                  <Select placeholder={record.st} style={{marginLeft:"10px"}} onSelect={(e)=>{setStatusState(e); setSelectedRow(record.id)}}>
                     {
                         stat.map((status,index)=>{
                             return <Select.Option key={index} value={status}>{status}</Select.Option>
@@ -267,7 +286,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
               return (
 
                 <>
-                  <Button type="link" style={{ marginLeft: 0, padding: 0 }} className='edit-button-active' onClick={() => {
+                  <Button type="link" style={{ marginLeft: 0, padding: 0 }} className={`edit-button-active edit-row-${record.id}`} onClick={() => {
                     setIsEditing(true);
                     console.log(record)
                     setEditingRow(record.id);
@@ -279,15 +298,14 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
                     setStartDate(record.DueDate)
                     setTags(record.labels)
                    
-                    
-                    document.getElementsByClassName('save-button-unactive')[0].classList.add('save-button-active')
-                    document.getElementsByClassName('save-button-active')[0].classList.remove('save-button-unactive')
+                    document.getElementsByClassName(`save-row-${record.id}`)[0].classList.add('save-button-active')
+                    document.getElementsByClassName(`save-row-${record.id}`)[0].classList.remove('save-button-unactive')
 
-                    document.getElementsByClassName('edit-button-active')[0].classList.add('edit-button-unactive')
-                    document.getElementsByClassName('edit-button-active')[1].classList.add('edit-button-unactive')
+                    document.getElementsByClassName(`edit-row-${record.id}`)[0].classList.add('edit-button-unactive')
+                    document.getElementsByClassName(`edit-row-${record.id}`)[1].classList.add('edit-button-unactive')
                     
-                    document.getElementsByClassName('edit-button-unactive')[0].classList.remove('edit-button-active')
-                    document.getElementsByClassName('edit-button-unactive')[1].classList.remove('edit-button-active')
+                    document.getElementsByClassName(`edit-row-${record.id}`)[0].classList.remove('edit-button-active')
+                    document.getElementsByClassName(`edit-row-${record.id}`)[1].classList.remove('edit-button-active')
                     
 
                   } }>
@@ -296,43 +314,45 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
 
                   <Button type='link' style={{ marginLeft: "15px", padding: 0 }}
                     htmlType='submit'
-                    className='save-button-unactive'
+                    className={`save-button-unactive save-row-${record.id}`}
+                    onClick={() => {
+                      document.getElementsByClassName(`save-row-${record.id}`)[0].classList.add('save-button-unactive')
+                      document.getElementsByClassName(`save-row-${record.id}`)[0].classList.remove('save-button-active')
+
+                      document.getElementsByClassName(`edit-row-${record.id}`)[0].classList.add('edit-button-active')
+                      document.getElementsByClassName(`edit-row-${record.id}`)[1].classList.add('edit-button-active')
+                      
+                      document.getElementsByClassName(`edit-row-${record.id}`)[0].classList.remove('edit-button-unactive')
+                      document.getElementsByClassName(`edit-row-${record.id}`)[1].classList.remove('edit-button-unactive')                
+                    }}
                   >
                     Save
                   </Button>
                     
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-                      <a style={{marginLeft:"15px"}} className='edit-button-active' >Delete</a>
-                    </Popconfirm></>
+                      <a style={{marginLeft:"15px"}} className={`edit-button-active edit-row-${record.id}`} >Delete</a>
+                    </Popconfirm>
+                  </>
                 )
  
         
         }
       }
     ]
-      const actionRef = useRef();
+    const actionRef = useRef();
       
     const [value, setValue] = useState('');
 
     const onFinish = (values) => {
-      document.getElementsByClassName('save-button-active')[0].classList.add('save-button-unactive')
-      document.getElementsByClassName('save-button-unactive')[0].classList.remove('save-button-active')
 
-      document.getElementsByClassName('edit-button-unactive')[0].classList.add('edit-button-active')
-      document.getElementsByClassName('edit-button-unactive')[1].classList.add('edit-button-active')
+    const UpdatedDataSource = [...todo]
       
-      document.getElementsByClassName('edit-button-active')[0].classList.remove('edit-button-unactive')
-      document.getElementsByClassName('edit-button-active')[1].classList.remove('edit-button-unactive')
-
-      
-      const UpdatedDataSource = [...todo]
-      
-      values = {
-        title : editingRowTitle,
-        Description:editingRowDesc,
-        DueDate : startDate,
-        labels:tags
-      }
+    values = {
+      title : editingRowTitle,
+      Description:editingRowDesc,
+      DueDate : startDate,
+      labels:tags
+    }
 
       UpdatedDataSource[editingRow - 1]['title'] = values.title;
       UpdatedDataSource[editingRow-1]['Description'] = values.Description

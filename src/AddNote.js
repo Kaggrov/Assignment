@@ -1,16 +1,28 @@
 import React from 'react'
 import "./AddNote.css"
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from 'react';
 import Tags from './Tags';
 import {v4 as uuidv4} from "uuid";
-import {Select,Menu,Dropdown} from 'antd';
+import {Select,Menu,Dropdown,notification} from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { DatePicker, Space } from 'antd';
+import dayjs from 'dayjs';
 
 const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOriginalTodo}) => {
 
       
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = () => {
+    api.open({
+      message: 'Success',
+      description:
+        'Your Data has been stored Successfully',
+      duration: 2,
+    });
+  };
+
     const stat =  ["Open","Working","Done","Overdue"];
     
     const [tags, setTags] = useState([]);
@@ -45,6 +57,24 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
       console.log(e);
       Setst(e);
     }
+
+    const range = (start, end) => {
+      const result = [];
+      for (let i = start; i < end; i++) {
+        result.push(i);
+      }
+      return result;
+    };
+
+    const disabledDate = (current) => {
+      // Can not select days before today and today
+      return current+1 < dayjs().endOf('day');
+    };
+    const disabledDateTime = () => ({
+      disabledHours: () => range(0, 24).splice(4, 20),
+      disabledMinutes: () => range(30, 60),
+      disabledSeconds: () => [55, 56],
+    });
      
 
   return (
@@ -83,12 +113,26 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
           }
         </Select>
         <div style={{margin:"10px" ,marginLeft:"0", fontWeight:"500",fontSize:"1.5rem"}}>Select End Date :-</div>
-        <DatePicker 
+        {/* <DatePicker 
             selected={startDate} 
             onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}} 
             className='todo__date'
-        />
-        <button className='button__input'>Submit</button>
+        /> */}
+        
+        <DatePicker
+        format="YYYY-MM-DD "
+        disabledDate={disabledDate}
+        disabledTime={disabledDateTime}
+        showTime={{
+          defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
+        }}
+        selected={startDate} 
+        // onChange={(date) =>{((date.getDate()>current.getDate()) || (date.getMonth()>current.getMonth()) ? setStartDate(date) : alert("Invalid End Date "))}} 
+        onChange={(date)=>setStartDate(date)}
+        className='todo__date'
+      />
+        {contextHolder}
+        <button className='button__input' onClick={openNotification}>Submit</button>
     </form>
     </div>
   )
