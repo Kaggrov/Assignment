@@ -211,7 +211,7 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
 
             }else {
               
-              if(statusState ==='Done' && selectedRow === record.id)
+              if(record.st ==='Done')
               {
                 return (<Space>
                   {record?.labels?.map((name) => (
@@ -266,12 +266,12 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
             ],
             
             render: (_,record) => (
-                
-                  <Select placeholder={record.st} style={{marginLeft:"10px"}} onSelect={(e)=>{setStatusState(e); setSelectedRow(record.id)}}>
+                  
+                  <Select placeholder={record.st} style={{marginLeft:"10px"}} onSelect={(e)=>{setStatusState(e); setSelectedRow(record.id); record.st = e;}}>
                     {
                         stat.map((status,index)=>{
                             return <Select.Option key={index} value={status}>{status}</Select.Option>
-                        } )
+                        })
                     }
                   </Select>
             ),
@@ -344,7 +344,8 @@ const Table = ({todo,setTodo, count, setCount, originalTodo, setOriginalTodo}) =
     const [value, setValue] = useState('');
 
     const onFinish = (values) => {
-
+    
+    
     const UpdatedDataSource = [...todo]
       
     values = {
