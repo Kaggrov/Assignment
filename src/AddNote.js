@@ -19,7 +19,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
       message: 'Success',
       description:
         'Your Data has been stored Successfully',
-      duration: 2,
+      duration: 3.5,
     });
   };
 
@@ -45,6 +45,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
     const onFormSubmit = (e) => {
 
         e.preventDefault();
+        openNotification();
         setOriginalTodo([...todo,{id:todo.length+1,timeStamp:timeStamp,title:input,Description:desc,DueDate:startDate,labels:tags,st:st}]);
         setTodo([...todo,{id:todo.length+1,timeStamp:timeStamp,title:input,Description:desc,DueDate:startDate,labels:tags,st:st}]);
         setTags([]);
@@ -132,7 +133,7 @@ const AddNote = ({input,setInput,desc,setDesc,todo,setTodo, originalTodo, setOri
         className='todo__date'
       />
         {contextHolder}
-        <button className='button__input' onClick={openNotification}>Submit</button>
+        <button className='button__input'>Submit</button>
     </form>
     </div>
   )
@@ -156,4 +157,4 @@ export default AddNote
 // todo_date {
   // padding: 0.4rem;
   //   border: none;
-// }
+// }///
